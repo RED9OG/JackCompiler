@@ -1,6 +1,6 @@
 import os, sys
 import utils
-From JackTokenizer import JackTokenizer
+from JackTokenizer import JackTokenizer
 
 
 class JackAnalyzer(object):
@@ -11,7 +11,6 @@ class JackAnalyzer(object):
         files = utils.getFiles(sys.argv[1])
         for x in files:
             JackTokenizer(x)
-            
 
 
 JackAnalyzer()
