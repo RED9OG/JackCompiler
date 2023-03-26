@@ -5,3 +5,5 @@ print(string[:7])
 print(string[7:])
 newstr = string[:7] + ' ' + string[7 + 1 :]
 print(newstr)
+print("hllo world")
+
