@@ -1,6 +1,7 @@
 import utils
 
 from LexicalElements import symbols
+from LexicalElements import keyword 
 
 
 
@@ -54,8 +55,14 @@ class JackTokenizer(object):
 
         return tokenized
     
-    def tokenType(arg):
-        pass
+    def tokenType(token):
+        returnValue = ''
+        if token in keyword:
+            returnValue = 'KEYWORD'
+        elif token in symbols:  
+            returnValue = 'SYMBOL'
+           
+                 
 
     def keyWord(arg):
         pass

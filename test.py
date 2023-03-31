@@ -1,1 +1,2 @@
+print(type(3))
 
