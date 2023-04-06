@@ -19,41 +19,21 @@ def find_all(a_str, sub):
         yield start
         start += len(sub)
         
-def tokenizer(linesOfCode):
-    arr = []
-    temp = []
-    tokenized = []
-    string = ''
-    for x in linesOfCode:
-        if x.startswith('//') or x == '':
-            pass
-        elif x.find('//') != -1:
-            index = x.find('//')
-            newx = x[:index]
-            arr.append(newx)
-            
-            
-        else:
-            arr.append(x)
-
-    for code in arr:
-        newCode = ""
-        for symbol in symbols:
-            if code.find(symbol) != -1:
-                # print(code.find(symbol),symbol,code)
-                index = code.find(symbol) 
-                newCode = code[:index] + ' ' + symbol + ' ' + code[index+1:]
-                code = newCode
-        temp.append(newCode) 
-  
+def objectMaker(code):
+    obj = {'tokenType': tokenType(code)}
+    if obj['tokenType'] == 'KEYWORD':
+        obj = {'tokenType':obj['tokenType'],'keyWord':self.key}
+        
+    elif obj['tokenType'] == 'SYMBOL':
+        pass
+    elif obj['tokenType'] == 'IDENTIFIER':
+        pass
+    elif obj['tokenType'] == 'STRING_CONST':
+        pass
+    elif obj['tokenType'] == 'INT_CONST':
+        pass
     
-    for x in temp:
-        string = string + x
-    for x in string.split(" "):
-        if x != '':
-            tokenized.append(x)
-        else:
-            pass
-            
-    return tokenized
+   return obj
+    
+    
 

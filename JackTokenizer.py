@@ -37,11 +37,26 @@ class JackTokenizer(object):
             newCode = ""
             for symbol in symbols:
                 if code.find(symbol) != -1:
-                # print(code.find(symbol),symbol,code)
+                
                     index = code.find(symbol) 
                     newCode = code[:index] + ' ' + symbol + ' ' + code[index+1:]
                     code = newCode
-            temp.append(newCode) 
+            obj = {'tokenType':tokenType(code)}
+            if tokenType(code) == 'KEYWORD':
+                obj['keyword'] = self.keyWord(code)
+            elif tokenType(code) == 'SYMBOL':
+                obj['symbol'] = self.symbol(code)
+            elif tokenType(code) == 'INT_CONST':
+                obj['intVal'] == self.intVal(code)
+            
+            elif tokenType(code) == 'STRING_CONST':
+                obj['stringVal'] == self.stringVal(code)
+        
+            elif tokenType(code) == 'IDENTIFIER':
+                obj['identifier'] == self.identifier(code)
+
+                
+            temp.append(obj) 
   
     
         for x in temp:
@@ -61,6 +76,13 @@ class JackTokenizer(object):
             returnValue = 'KEYWORD'
         elif token in symbols:  
             returnValue = 'SYMBOL'
+        elif type(token) is int:
+            returnValue = 'INT_CONST'
+        elif token.startswith('"') and token.endswith('"'):
+            returnValue = 'STRING_CONST'
+        else:
+            returnValue = 'IDENTIFIER'
+        
            
                  
 
