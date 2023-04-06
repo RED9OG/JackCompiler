@@ -41,36 +41,35 @@ class JackTokenizer(object):
                     index = code.find(symbol) 
                     newCode = code[:index] + ' ' + symbol + ' ' + code[index+1:]
                     code = newCode
-            obj = {'tokenType':tokenType(code)}
-            if tokenType(code) == 'KEYWORD':
-                obj['keyword'] = self.keyWord(code)
-            elif tokenType(code) == 'SYMBOL':
-                obj['symbol'] = self.symbol(code)
-            elif tokenType(code) == 'INT_CONST':
-                obj['intVal'] == self.intVal(code)
-            
-            elif tokenType(code) == 'STRING_CONST':
-                obj['stringVal'] == self.stringVal(code)
-        
-            elif tokenType(code) == 'IDENTIFIER':
-                obj['identifier'] == self.identifier(code)
-
-                
-            temp.append(obj) 
+            temp.append(newCode) 
   
     
         for x in temp:
             string = string + x
         for x in string.split(" "):
+            obj = {'tokenType': self.tokenType(x)}
+    
+            if self.tokenType(x) == 'KEYWORD':
+                obj['keyword'] = self.keyWord(x)
+            elif self.tokenType(x) == 'SYMBOL':
+                obj['symbol'] = self.symbol(x)
+            elif self.tokenType(x) == 'IDENTIFIER':
+                obj['identifier'] = self.identifier(x)
+            elif self.tokenType(x) == 'INT_CONST':
+                obj['intVal'] == self.intVal(x)
+            elif self.tokenType(x) == 'INT_CONST':
+                obj['stringVal'] == self.stringVal(x) 
             if x != '':
-                tokenized.append(x)
+                
+                tokenized.append(obj)
+                
             else:
                 pass
-            
-
+    
+        print(tokenized)    
         return tokenized
     
-    def tokenType(token):
+    def tokenType(self,token):
         returnValue = ''
         if token in keyword:
             returnValue = 'KEYWORD'
@@ -82,31 +81,27 @@ class JackTokenizer(object):
             returnValue = 'STRING_CONST'
         else:
             returnValue = 'IDENTIFIER'
+        return returnValue
 
             
-    def symbol(arg):
+    def symbol(self,arg):
         return arg
         
     
-    def identifier(arg):
+    def identifier(self,arg):
         return arg
        
         
     
-    def intVal(arg):
+    def intVal(self,arg):
         return arg
     
     
-    def stringVal(arg):
+    def stringVal(self,arg):
         return arg
         
-    
-   
-      
-           
-                 
-
-    def keyWord(arg):
+              
+    def keyWord(self,arg):
         returnValue = ''
         if arg == 'constructor':
             returnValue = 'CONSTRUCTOR'
@@ -148,6 +143,7 @@ class JackTokenizer(object):
             returnValue = 'THIS'
         else:
             returnValue = ''
+        return returnValue
             
               
   

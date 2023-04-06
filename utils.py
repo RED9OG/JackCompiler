@@ -19,21 +19,4 @@ def find_all(a_str, sub):
         yield start
         start += len(sub)
         
-def objectMaker(code):
-    obj = {'tokenType': tokenType(code)}
-    if obj['tokenType'] == 'KEYWORD':
-        obj = {'tokenType':obj['tokenType'],'keyWord':self.key}
-        
-    elif obj['tokenType'] == 'SYMBOL':
-        pass
-    elif obj['tokenType'] == 'IDENTIFIER':
-        pass
-    elif obj['tokenType'] == 'STRING_CONST':
-        pass
-    elif obj['tokenType'] == 'INT_CONST':
-        pass
-    
-   return obj
-    
-    
 
