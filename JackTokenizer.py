@@ -82,24 +82,72 @@ class JackTokenizer(object):
             returnValue = 'STRING_CONST'
         else:
             returnValue = 'IDENTIFIER'
+
+            
+    def symbol(arg):
+        return arg
         
+    
+    def identifier(arg):
+        return arg
+       
+        
+    
+    def intVal(arg):
+        return arg
+    
+    
+    def stringVal(arg):
+        return arg
+        
+    
+   
+      
            
                  
 
     def keyWord(arg):
-        pass
-
-    def symbol(arg):
-        pass
-    
-    def identifier(arg):
-        pass
-    
-    def intVal(arg):
-        pass
-    
-    def stringVal(arg):
-        pass
-    
-   
-
+        returnValue = ''
+        if arg == 'constructor':
+            returnValue = 'CONSTRUCTOR'
+        elif arg == 'class':
+            returnValue = 'CLASS'
+        elif arg == 'method':
+            returnValue = 'METHOD'
+        elif arg == 'function':
+            returnValue = 'FUNTION'
+        elif arg == 'boolean':
+            returnValue = 'BOOLEAN'
+        elif arg == 'char':
+            returnValue = 'CHAR'
+        elif arg == 'void':
+            returnValue = 'VOID'
+        elif arg == 'static':
+            returnValue = 'STATIC'
+        elif arg == 'field':
+            returnValue = 'FIELD'
+        elif arg == 'let':
+            returnValue = 'LET'
+        elif arg == 'do':
+            returnValue = 'DO'
+        elif arg == 'if':
+            returnValue = 'IF'
+        elif arg == 'else':
+            returnValue = 'ELSE'
+        elif arg == 'while':
+            returnValue = 'WHILE'
+        elif arg == 'return':
+            returnValue = 'RETURN'
+        elif arg == 'true':
+            returnValue = 'TRUE'
+        elif arg == 'false':
+            returnValue = 'FALSE'
+        elif arg == 'null':
+            returnValue = 'NULL'
+        elif arg == 'this':
+            returnValue = 'THIS'
+        else:
+            returnValue = ''
+            
+              
+  
