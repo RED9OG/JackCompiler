@@ -1,3 +1,2 @@
-print(type(3) is int)
-
-
+arr = [3,2]
+print(len(arr))

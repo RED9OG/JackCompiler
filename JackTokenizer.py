@@ -6,6 +6,8 @@ from LexicalElements import keyword
 
 
 class JackTokenizer(object):
+    tokenizedData = []
+    
     def __init__(self, file):
         self.file = file
         self.start()
@@ -22,7 +24,7 @@ class JackTokenizer(object):
         tokenized = []
         string = ''
         for x in linesOfCode:
-            if x.startswith('//') or x == '':
+            if x.startswith('//') or x == '' or x.startswith('/'):
                 pass
             elif x.find('//') != -1:
                 index = x.find('//')
@@ -42,7 +44,8 @@ class JackTokenizer(object):
                     newCode = code[:index] + ' ' + symbol + ' ' + code[index+1:]
                     code = newCode
             temp.append(newCode) 
-  
+ 
+ 
     
         for x in temp:
             string = string + x
@@ -66,8 +69,7 @@ class JackTokenizer(object):
             else:
                 pass
     
-        print(tokenized)    
-        return tokenized
+        self.tokenizedData = tokenized
     
     def tokenType(self,token):
         returnValue = ''
@@ -141,6 +143,9 @@ class JackTokenizer(object):
             returnValue = 'NULL'
         elif arg == 'this':
             returnValue = 'THIS'
+        elif arg == 'int':
+            returnValue = 'INT'
+            
         else:
             returnValue = ''
         return returnValue

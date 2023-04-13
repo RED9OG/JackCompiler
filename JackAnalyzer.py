@@ -1,6 +1,7 @@
 import os, sys
 import utils
 from JackTokenizer import JackTokenizer
+from CompilationEngine import CompilationEngine
 
 
 
@@ -12,7 +13,14 @@ class JackAnalyzer(object):
     def start(self):
         files = utils.getFiles(sys.argv[1])
         for x in files:
-            JackTokenizer(x)
+            tokenizedData = JackTokenizer(x).tokenizedData 
+           
+            compiled = CompilationEngine(tokenizedData)
+        
+            
+         
+            
+            
 
 
 JackAnalyzer()
