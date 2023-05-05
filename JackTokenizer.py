@@ -59,9 +59,9 @@ class JackTokenizer(object):
             elif self.tokenType(x) == 'IDENTIFIER':
                 obj['identifier'] = self.identifier(x)
             elif self.tokenType(x) == 'INT_CONST':
-                obj['intVal'] == self.intVal(x)
-            elif self.tokenType(x) == 'INT_CONST':
-                obj['stringVal'] == self.stringVal(x) 
+                obj['intVal'] = self.intVal(x)
+            elif self.tokenType(x) == 'STRING_CONST':
+                obj['stringVal'] = self.stringVal(x) 
             if x != '':
                 
                 tokenized.append(obj)
@@ -112,7 +112,7 @@ class JackTokenizer(object):
         elif arg == 'method':
             returnValue = 'METHOD'
         elif arg == 'function':
-            returnValue = 'FUNTION'
+            returnValue = 'FUNCTION'
         elif arg == 'boolean':
             returnValue = 'BOOLEAN'
         elif arg == 'char':
@@ -145,6 +145,8 @@ class JackTokenizer(object):
             returnValue = 'THIS'
         elif arg == 'int':
             returnValue = 'INT'
+        elif arg == 'var':
+            returnValue = 'VAR'
             
         else:
             returnValue = ''
