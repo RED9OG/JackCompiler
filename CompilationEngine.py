@@ -7,7 +7,7 @@ class CompilationEngine(object):
     def __init__(self,tokenizedData):
         self.tokenizedData = tokenizedData
         self.CompileClass(tokenizedData)
-        print(CompilationEngine.xml)
+        # print(CompilationEngine.xml)
        
  
 
@@ -31,7 +31,7 @@ class CompilationEngine(object):
         if tokens[1]['tokenType']  == 'IDENTIFIER':
             CompilationEngine.xml.append('<identifier>') 
             CompilationEngine.xml.append(tokens[1]['identifier'])
-            CompilationEngine.xml.append('</keyword>')
+            CompilationEngine.xml.append('</identifier>')
         else:
             sys.exit('Error:Wrong identifier or not written classname')
              
@@ -50,13 +50,27 @@ class CompilationEngine(object):
             if tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'FIELD':
                 end = self.CompileClassVarDec(x,tokens) 
                 CompilationEngine.start = end
+            elif tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'STATIC':
+                end = self.CompileClassVarDec(x,tokens) 
+                CompilationEngine.start = end
+            else:
+                pass
                      
         for x in range(CompilationEngine.start,len(tokens)):
-            
+            # print(tokens[x])
             if tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'FUNCTION':
                 end = self.CompileSubroutine(x,tokens) 
                 CompilationEngine.start = end
-               
+            elif tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'CONSTRUCTOR':
+                end = self.CompileSubroutine(x,tokens) 
+                CompilationEngine.start = end
+            elif tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'METHOD':
+                # print('hl')
+                end = self.CompileSubroutine(x,tokens) 
+                CompilationEngine.start = end
+            else:
+                pass
+                 
                     
         if tokens[len(tokens)-1]['tokenType']  == 'SYMBOL':
          
@@ -133,6 +147,7 @@ class CompilationEngine(object):
 
     
     def CompileSubroutine(self,start,tokens):
+        # print(tokens[start],start)
         end = 0
         CompilationEngine.xml.append("<subroutineDec>")
         if tokens[start]['tokenType'] == 'KEYWORD' and tokens[start]['keyword'] == 'CONSTRUCTOR':           
@@ -154,45 +169,60 @@ class CompilationEngine(object):
             CompilationEngine.xml.append('</keyword>')
             
         else:
-            sys.exit('Error:syntaxerror in function')
+            sys.exit('Error:syntax error in function declaration')
                      
 
 
-                     
+        # print(tokens[start+1])            
         if tokens[start+1]['tokenType'] == 'KEYWORD' and tokens[start+1]['keyword'] == 'VOID':
             CompilationEngine.xml.append('<keyword>') 
             CompilationEngine.xml.append(tokens[start+1]['keyword'].lower())
             CompilationEngine.xml.append('</keyword>')
+            
+        elif tokens[start+1]['tokenType'] == 'KEYWORD' and tokens[start+1]['keyword'] == 'INT':
+            utils.handleKeyword(start+1,'INT','type error',tokens)
+            
+        elif tokens[start+1]['tokenType'] == 'KEYWORD' and tokens[start+1]['keyword'] == 'CHAR':
+            utils.handleKeyword(start+1,'CHAR','type error',tokens)
+            
+        elif tokens[start+1]['tokenType'] == 'KEYWORD' and tokens[start+1]['keyword'] == 'BOOLEAN':
+            utils.handleKeyword(start+1,'BOOLEAN','type error',tokens)
+            
+        elif tokens[start+1]['tokenType'] == 'IDENTIFIER':
+            utils.handleIdentifier(start+1,'type error',tokens)
+            
         else:
-            sys.exit("Error:Type not defined")
+            sys.exit("Error:function type not defined")
             
         if tokens[start+2]['tokenType'] == 'IDENTIFIER':
             CompilationEngine.xml.append('<identifier>') 
             CompilationEngine.xml.append(tokens[start+2]['identifier'].lower())
             CompilationEngine.xml.append('</identifier>')
         else:
-            sys.exit("Error:identifier ")
+            sys.exit("Error:subroutineName ")
 
-        utils.handleSymbol(start+3,'(','Not proper symbol',tokens)
+        utils.handleSymbol(start+3,'(','( not found in function parameterList',tokens)
+        # print(tokens)
         self.compileParameterList(start+4,tokens)
         start = CompilationEngine.end 
-        utils.handleSymbol(start,')','Not proper symbol',tokens)
+        utils.handleSymbol(start,')','( not found in function parameterList',tokens)
         
          # function starts 
-        utils.handleSymbol(start+1,'{','Not proper symbol',tokens)    
-        self.compileVarDec(start+2,tokens)
+        utils.handleSymbol(start+1,'{',' { function starting Not proper symbol',tokens)    
+      
+     
         start = CompilationEngine.end + 1 
                 
  
     
         self.compileStatements(start,tokens) 
    
+        
         end = CompilationEngine.end
          
-       
-        utils.handleSymbol(end+1,'}','} not found',tokens)    
+        utils.handleSymbol(end,'}','} not found in function ending',tokens)    
         CompilationEngine.xml.append("</subroutineDec>")
-        return end   
+        return end+1   
      
     def compileParameterList(self,start,tokens):
         end = 0
@@ -201,11 +231,12 @@ class CompilationEngine(object):
         for x in range(start,len(tokens)):
         
             if tokens[x]['tokenType'] == 'KEYWORD':
-                utils.handleType(x,'wrong type',tokens)            
+                utils.handleType(x,'parameterList  type',tokens)            
             elif tokens[x]['tokenType'] == 'IDENTIFIER':
-                utils.handleIdentifier(x,'wrong identifier',tokens)
+                utils.handleIdentifier(x,'wrong parameterList identifier',tokens)
             elif tokens[x]['tokenType'] == 'SYMBOL' and tokens[x]['symbol'] == ',':
-                utils.handleSymbol(x,tokens[x],'wrong symbol',tokens)
+          
+                utils.handleSymbol(x,tokens[x]['symbol'],'parameterList symbol',tokens)
             elif tokens[x]['tokenType'] == 'SYMBOL' and tokens[x]['symbol'] == ')':
                 CompilationEngine.end = x
                 break
@@ -214,13 +245,14 @@ class CompilationEngine(object):
                
                 
         CompilationEngine.xml.append("</parameterList>")
+        # print(CompilationEngine.xml)
 
     def compileVarDec(self,start,tokens):
         # print(CompilationEngine.xml)
         # print(tokens)
-        
+
         utils.handleKeyword(start,'VAR','wrong variable declaration',tokens)
-        utils.handleType(start+1,'wrong type',tokens)
+        utils.handleType(start+1,'wrong type variable declaration',tokens)
        
         for x in range(start+2,len(tokens)):
           
@@ -240,12 +272,13 @@ class CompilationEngine(object):
     def compileStatements(self,start,tokens):
 
         for x in range(start,len(tokens)):
+            
             if tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'LET': 
-             
                 self.compileLet(x,tokens)
+            elif tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'VAR':
+                self.compileVarDec(x,tokens)
             elif tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'IF':
                 self.compileIf(x,tokens)
-              
             elif tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'WHILE':
                 self.compileWhile(x,tokens)
     
@@ -254,58 +287,71 @@ class CompilationEngine(object):
             
             elif tokens[x]['tokenType'] == 'KEYWORD' and tokens[x]['keyword'] == 'RETURN':
                 self.compileReturn(x,tokens)
+            elif tokens[x]['tokenType'] == 'SYMBOL' and tokens[x]['symbol'] == '}':
+                CompilationEngine.end = x
+                break
             else:
                 pass
  
                 
                         
     def compileDo(self,start,tokens):
-        utils.handleKeyword(start,'DO','keyword error',tokens) 
-        self.compileTerm(start,tokens) 
-        # CompilationEngine.end = start+1
+       
+        utils.handleKeyword(start,'DO',' do keyword error',tokens) 
+        self.compileTerm(start+1,tokens) 
+        print('as')
+        start = CompilationEngine.end
+        # print("x-------------------x-------------------x---------------------x------------------x")
+        # print(CompilationEngine.xml)
+        # print(tokens[start])
+        utils.handleSymbol(start,';','syssmbol error',tokens)
+      
         
     def compileLet(self,start,tokens):
   
         utils.handleKeyword(start,'LET','Let statement ',tokens)
-        utils.handleIdentifier(start+1,'Wrong return identifier',tokens)
+        utils.handleIdentifier(start+1,'Wrong let identifier',tokens)
+     
         if tokens[start+2]['symbol'] == '[':
-            utils.handleSymbol(start+2,'[','symbol Error',tokens)
-            self.compileExpression(start+3,'Wrong return expression',tokens)
-            utils.handleSymbol(start+4,'[','symbol Error',tokens)
+            utils.handleSymbol(start+2,'[','Let statementsymbol Error',tokens)
+            self.compileExpression(start+3,'Let statementWrong return expression',tokens)
+            utils.handleSymbol(start+4,']','Let statementsymbol Error',tokens)
             CompilationEngine.end = start+5
             
         elif tokens[start+2]['symbol'] == '=': 
-            utils.handleSymbol(start+2,'=','symbol Error',tokens)
+            
+            utils.handleSymbol(start+2,'=','Let statementsymbol Error',tokens)
             self.compileExpression(start+3,tokens)
             start = CompilationEngine.end
-            utils.handleSymbol(start,';','symbol Error',tokens)
+
+            utils.handleSymbol(start,';','Let statementsymbol Error',tokens)
             CompilationEngine.end = start+1
    
                                
     def compilewhile(self,start,tokens):
-        utils.handleKeyword(start,'WHILE','keyword error',tokens)
-        utils.handleSymbol(start+1,'(','symbol Error',tokens)
+        utils.handleKeyword(start,'WHILE','while keyword error',tokens)
+        utils.handleSymbol(start+1,'(','while symbol Error',tokens)
         self.compileExpression(start+2,tokens)
         start = CompilationEngine.end
-        utils.handleSymbol(start,')','symbol Error',tokens)
-        utils.handleSymbol(start+1,'{','symbol Error',tokens)
+        utils.handleSymbol(start,')','while symbol Error',tokens)
+        utils.handleSymbol(start+1,'{','while symbol Error',tokens)
         self.compileStatements(start+2,tokens)
         start = CompilationEngine.end
-        utils.handleSymbol(start,'}','symbol Error',tokens)
+        utils.handleSymbol(start,'}','while symbol Error',tokens)
         CompilationEngine.end = start+1
         
                            
     def compileReturn(self,start,tokens):
+        
         CompilationEngine.xml.append('<returnStatement>')
      
         utils.handleKeyword(start,'RETURN','Return statement not found',tokens)
-        if tokens[start+1]['tokenType'] == 'IDENTIFIER':
-            utils.handleIdentifier(start+1,'Wrong return identifier',tokens)
-            utils.handleSymbol(start+2,';',"; not found",tokens)
-            CompilationEngine.end = start+2
+        if tokens[start+1]['tokenType'] != ';':
+            self.compileExpression(start+1,tokens)
+       
         else:
-            CompilationEngine.end = start+1
-            utils.handleSymbol(start+1,';','; not found',tokens)
+            CompilationEngine.end = start+2
+            utils.handleSymbol(start+1,';','return ; not found',tokens)
        
         CompilationEngine.xml.append('</returnStatement>')
         
@@ -313,28 +359,34 @@ class CompilationEngine(object):
         
 
     def compileIf(self,start,tokens):
-        utils.handleKeyword(start,'IF','keyword error',tokens)
-        utils.handleSymbol(start+1,'(','symbol Error',tokens)
+        utils.handleKeyword(start,'IF','IF keyword error',tokens)
+        utils.handleSymbol(start+1,'(','IFsymbol Error',tokens)
         self.compileExpression(start+2,tokens)
         start = CompilationEngine.end
-        utils.handleSymbol(start,')','symbol Error',tokens)
-        utils.handleSymbol(start+1,'{','symbol Error',tokens)
+        # print(CompilationEngine.xml)
+        # print(tokens[start])
+        utils.handleSymbol(start,')','IaaaFsybol Error',tokens)
+        utils.handleSymbol(start+1,'{','IFsymbol Error',tokens)
         self.compileStatements(start+2,tokens)
         start = CompilationEngine.end
-        utils.handleSymbol(start,'}','symbol Error',tokens)
+        utils.handleSymbol(start,'}','IFsymbol Error',tokens)
         CompilationEngine.end = start+1
         if tokens[start+1]['keyword'] == 'else':
-            utils.handleKeyword(start,'ELSE','keyword error',tokens)
-            utils.handleSymbol(start+1,'{','symbol Error',tokens)
+            utils.handleKeyword(start,'ELSE','IFkeyword error',tokens)
+            utils.handleSymbol(start+1,'{','IFsymbol Error',tokens)
             self.compileStatements(start+2,tokens)
             start = CompilationEngine.end
-            utils.handleSymbol(start,'}','symbol Error',tokens)
+            utils.handleSymbol(start,'}','IFsymbol Error',tokens)
             CompilationEngine.end = start+1
                                
         
             
     def compileTerm(self,start,tokens):
-                               
+  
+   
+        # print("-------------x-------------------x-------------------x--------------------------x")
+        # print(tokens[start])
+        
         if tokens[start]['tokenType'] == 'INT_CONST':
             CompilationEngine.xml.append('<integerConstant>') 
             CompilationEngine.xml.append(tokens[start]['intVal'])
@@ -349,63 +401,104 @@ class CompilationEngine(object):
             CompilationEngine.end = start +1
                                
         elif tokens[start]['tokenType'] == 'KEYWORD':
-            utils.handlekeyword(start,tokens[start]['keyword'],"false keyword",tokens)
+            # print(tokens[start])       
+            # utils.handleKeyword(start,tokens[start]['keyword'],"term false keyword",tokens)
             CompilationEngine.end = start +1
-
+        
         elif tokens[start]['tokenType'] == 'IDENTIFIER':
-            utils.handleidentifier(start,"false identifier",tokens)
-            if tokens[start+1]['symbol'] == '[':
-                utils.handleSymbol(start+1,'[','wrong symbol',tokens)
+            # print(tokens[start])
+            utils.handleIdentifier(start,"term false identifier",tokens)
+            CompilationEngine.end = start+1
+            if tokens[start]['tokenType'] == 'SYMBOL' and tokens[start+1]['symbol'] == '[':
+                # utils.handleIdentifier(start,"term false identifier",tokens)
+                utils.handleSymbol(start+1,'[','variablename Experssion wrong symbol',tokens)
                 self.compileExpression(start,tokens) 
                 start = CompilationEngine.end
-                utils.handleSymbol(start,']','wrong symbol',tokens)
-            elif tokens[start]['symbol'] == '(':
-                utils.handleSymbol(start,'(''symbol er',tokens)
+                utils.handleSymbol(start,']','term wrong symbol',tokens)
+            elif tokens[start]['tokenType'] == 'SYMBOL' and tokens[start]['symbol'] == '(':
+                utils.handleSymbol(start,'(''term symbol errr',tokens)
                 self.compileExpression(start,tokens)
                 start = CompilationEngine.end
-                utils.handleSymbol(start,')''symbol er',tokens)
-            elif tokens[start+1]['symbol'] == '(':
-                utils.handleIdentifier(start,'identifier error',tokens)
-                utils.handleSymbol(start+1,'(''symbol er',tokens)
+                utils.handleSymbol(start,')''term symbol r',tokens)
+            elif tokens[start+1]['tokenType'] == 'SYMBOL' and tokens[start+1]['symbol'] == '(':
+                # utils.handleIdentifier(start,'subroutine call term identifier error',tokens)
+                utils.handleSymbol(start+1,'(','term symbl er',tokens)
                 self.compileExpressionList(start+2,tokens)
                 start = CompilationEngine.end
-                utils.handleSymbol(start,')''symbol er',tokens)
-            elif tokens[start+1]['symbol'] == '.':
-                utils.handleIdentifier(start,'identifier error',tokens)
-                utils.handleSymbol(start+1,'.''symbol er',tokens)
-                utils.handleIdentifier(start+2,'identifier error',tokens)
-                utils.handleSymbol(start+3,'(''symbol er',tokens)
+                # print(tokens[start])
+               
+                utils.handleSymbol(start,')','term symol er',tokens)
+                CompilationEngine.end = start +1
+                                                
+            elif  tokens[start+1]['tokenType'] == 'SYMBOL' and tokens[start+1]['symbol'] == '.':
+                # utils.handleIdentifier(start,'iterm dentifier error',tokens)
+                                                
+                utils.handleSymbol(start+1,'.','term ymbol er',tokens)
+                utils.handleIdentifier(start+2,'iterm dentifier error',tokens)
+                utils.handleSymbol(start+3,'(','ter symbol er',tokens)
+                # print(CompilationEngine.xml)
                 self.compileExpressionList(start+4,tokens)
+                # print(tokens[start+4])
                 start = CompilationEngine.end
-                utils.handleSymbol(start,'.''symbol er',tokens)
-            elif tokens[start]['symbol'] == '-':
-                utils.handleSymbol(start,'-''symbol er',tokens)
+                utils.handleSymbol(start,')','term bol er',tokens)
+                CompilationEngine.end = start+1
+                                                
+            elif  tokens[start]['tokenType'] == 'SYMBOL' and tokens[start]['symbol'] == '-':
+                utils.handleSymbol(start,'-','term symbol er',tokens)
                 self.compileTerm(start+1,tokens)
-                                                    
+        else:
+            pass
        
         
     def compileExpression(self,start,tokens):
+        # print(tokens[start])
+        
         self.compileTerm(start,tokens)
-        for x in range(start+1,len(tokens)):
-            if tokens[x]['tokenType'] == 'symbol' and tokens[x]['symbol'] != ';':
-                utils.handleSymbol(start,tokens[x],'symbol error',tokens)
-                self.compileTerm(x,tokens)
-            elif tokens[x]['tokenType'] == 'symbol' and tokens[x]['symbol'] == ';':
+        start = CompilationEngine.end
+        # print(CompilationEngine.xml)
+        for x in range(start,len(tokens)):
+            
+            if tokens[x]['tokenType'] == 'SYMBOL' and tokens[x]['symbol'] == ';':
                 CompilationEngine.end = x
                 break
+            elif tokens[x]['tokenType'] == 'SYMBOL' and tokens[x]['symbol'] == ')':
+                CompilationEngine.end = x
+                break                       
+            elif tokens[x]['tokenType'] == 'SYMBOL' and tokens[x]['symbol'] == ']':
+                CompilationEngine.end = x
+                break                       
+            elif tokens[x]['tokenType'] == 'SYMBOL' and tokens[x]['symbol'] == ',':
+                CompilationEngine.end = x
+                break 
+            elif tokens[x]['tokenType'] == 'SYMBOL' and tokens[x]['symbol'] != ';':
+                # print(CompilationEngine.xml)
+                # print(tokens[x])
+                utils.handleSymbol(x,tokens[x]['symbol'],'expression symbol  error',tokens)
+                self.compileTerm(x,tokens)                                                
             else:
-                pass
+                print(tokens[x])
+                self.compileTerm(x,tokens)                                                
+                
                 
         
     def compileExpressionList(self,start,tokens):
-        self.compileExpression(start,tokens)  
-        start = CompilationEngine.end
+        # self.compileExpression(start,tokens)  
+        # start = CompilationEngine.end
+        # print(tokens[start])
         for x in range(start,len(tokens)):
-            if tokens[x]['symbol'] == ')':
-                CompilationEngine.end = x
+            # print(tokens[x])
+            if tokens[x]['tokenType'] == 'SYMBOL' and tokens[x]['symbol'] == ')':
+                # print(tokens[x],x)
+                # if tokens[x+1]['symbol'] == ';':
+                    # print("gotcha")
+                utils.handleSymbol(x,tokens[x]['symbol'],'Expression symbol list',tokens)
+                CompilationEngine.end = x+1
+                # print('as')
                 break
-            elif tokens[x]['symbol'] == ',':
-                self.compileExpression(x,tokens)
+            elif tokens[x]['tokenType'] == 'SYMBOL':
+                # print(tokens[x])
+                utils.handleSymbol(x,tokens[x]['symbol'],'Expression symbol list',tokens)
             else:
-                pass
+                # print(tokens[x])
+                self.compileExpression(x,tokens)
         

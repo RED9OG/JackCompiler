@@ -14,7 +14,7 @@ class JackAnalyzer(object):
         files = utils.getFiles(sys.argv[1])
         for x in files:
             tokenizedData = JackTokenizer(x).tokenizedData 
-           
+          
             compiled = CompilationEngine(tokenizedData)
         
             

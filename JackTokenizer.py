@@ -72,12 +72,14 @@ class JackTokenizer(object):
         self.tokenizedData = tokenized
     
     def tokenType(self,token):
+        numbers = '0123456789'
         returnValue = ''
+        
         if token in keyword:
             returnValue = 'KEYWORD'
         elif token in symbols:  
             returnValue = 'SYMBOL'
-        elif type(token) is int:
+        elif token.isnumeric():
             returnValue = 'INT_CONST'
         elif token.startswith('"') and token.endswith('"'):
             returnValue = 'STRING_CONST'
